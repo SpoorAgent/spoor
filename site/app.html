@@ -28,6 +28,8 @@ nav{display:flex;gap:clamp(16px,2.4vw,34px);font:400 10.5px var(--mono);letter-s
 .open{display:inline-flex;align-items:center;gap:8px;font:500 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--white);border-radius:0;padding:9px 14px;transition:border-color .15s ease-out,background .15s ease-out,color .15s;border:1px solid rgba(255,255,255,.3);cursor:pointer}
 button.open:hover{border-color:var(--sig);background:var(--sig);color:var(--bg)}.open:disabled{opacity:.5;cursor:default}.open i{width:6px;height:6px;border-radius:50%;background:var(--sig);animation:live 1.6s infinite}@keyframes live{50%{opacity:.25}}
 .wrap{max-width:1240px;margin:0 auto;padding:0 var(--gx)}
+/* panels peel in with a 3D transform; clip sideways so a panel waiting to reveal never widens the page */
+main.wrap{overflow-x:clip}
 section{padding:clamp(48px,8vh,90px) 0 0}
 .eyebrow{font:500 10.5px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--white)}.eyebrow::before{content:"// ";background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent}
 h1,h2{margin:12px 0 0;font-weight:400;text-wrap:balance;color:var(--fg);letter-spacing:-.03em}h1{font:400 clamp(30px,3.4vw,52px)/1.05 var(--sans);letter-spacing:-.035em}h2{font:400 clamp(26px,2.8vw,42px)/1.05 var(--sans);letter-spacing:-.03em}h1 span,h2 span{background:var(--iris);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 9s ease-in-out infinite alternate}@keyframes sheen{from{background-position:0% 50%}to{background-position:100% 50%}}
@@ -290,7 +292,7 @@ function frame(now) {
   rg.strokeStyle = "#e4e6e9"; rg.lineWidth = 2; rg.beginPath(); rg.moveTo(xr(T), 8); rg.lineTo(xr(T), RH - 8); rg.stroke();
 }
 // ---------- research layer: Claude's study drawn on the body ----------
-// A beam sweeps head to tail (violet while waiting, brighter and faster while Claude is writing a note). Dots it passes light up,
+// A beam sweeps head to tail (soft grey while waiting, brighter and faster while Claude is writing a note). Dots it passes light up,
 // key neurons report their first-spike time in this sniff, and the hypothesis neurons are joined along real synapses.
 // None of this is spiking: spikes stay mint glows from the replay.
 const PH = new Float32Array(302).map(() => Math.random() * 6.2832), probe = new Float32Array(302);
@@ -300,8 +302,44 @@ function pathBetween(a, b) { const prev = new Map([[a, -1]]); let fr = [a];
   for (let d = 0; d < 4 && fr.length; d++) { const nx = []; for (const u of fr) for (const [v] of out[u]) if (!prev.has(v)) { prev.set(v, u); if (v === b) { const p = [b]; let x = b; while ((x = prev.get(x)) !== -1) p.unshift(x); return p; } nx.push(v); } fr = nx; }
   return null; }
 function setPath() { const f = LABELS.filter((l) => l[1]).map((l) => l[0]); PATH = []; for (let k = 0; k + 1 < f.length; k++) { const p = pathBetween(f[k], f[k + 1]) || pathBetween(f[k + 1], f[k]); if (p) PATH.push(p); } }
+// research trail: data points drift slowly from the tail toward the head along the body's own lanes, and the trail
+// grows with the study: about 140 points to start, two more per sniff logged (up to 900), a burst at the tail for
+// every newly logged sniff and a bigger one for every new lab note. The scan beam lights the points it passes.
+const LANES = ["sensory", "inter", "motor"], LANE_W = [.25, .3, .45];
+let curves = null, trail = [], trailT = 0, seenSniffs = -1, seenNote = -1;
+function buildCurves(W) { // each lane's height across the body, averaged from the real neuron positions and smoothed
+  const B = 48; curves = {};
+  for (const k of LANES) { const sum = new Float32Array(B), cnt = new Float32Array(B);
+    CON.neurons.forEach((n, i) => { if (n.kind !== k) return; const b = Math.max(0, Math.min(B - 1, Math.floor((XY[i][0] - 60) / (W - 120) * B))); sum[b] += XY[i][1]; cnt[b]++; });
+    const ys = Array.from({ length: B }, (_, b) => (cnt[b] ? sum[b] / cnt[b] : NaN));
+    for (let b = 0; b < B; b++) if (isNaN(ys[b])) { let l = b, r = b; while (l >= 0 && isNaN(ys[l])) l--; while (r < B && isNaN(ys[r])) r++; ys[b] = l < 0 ? ys[r] : r >= B ? ys[l] : ys[l] + (ys[r] - ys[l]) * (b - l) / (r - l); }
+    curves[k] = ys.map((_, b) => { let s = 0, c = 0; for (let d = -3; d <= 3; d++) if (ys[b + d] != null) { s += ys[b + d]; c++; } return s / c; }); } }
+const laneY = (k, x, W) => { const ys = curves[k], B = ys.length, u = Math.max(0, Math.min(B - 1.001, (x - 60) / (W - 120) * B - .5)), b = Math.floor(u); return ys[b] + (ys[b + 1] - ys[b]) * (u - b); };
+function spawn(W, x, hot = 0) { const r = Math.random(), k = r < LANE_W[0] ? "sensory" : r < LANE_W[0] + LANE_W[1] ? "inter" : "motor";
+  trail.push({ k, x: x ?? W - 60 + Math.random() * 40, off: (Math.random() - .5) * 46, v: 14 + Math.random() * 22, ph: Math.random() * 6.283, s: 1.6 + Math.random() * 2.2, hot }); }
+function drawTrail(now, W, H, sx) {
+  if (!curves) buildCurves(W);
+  const dt = trailT ? Math.min(.05, (now - trailT) / 1000) : .016; trailT = now;
+  const sn = LAB?.sniffs ?? 0, target = Math.min(900, 140 + sn * 2);
+  if (seenSniffs < 0) { seenSniffs = sn; for (let i = 0; i < Math.min(target, 220); i++) spawn(W, 60 + Math.random() * (W - 120)); }
+  if (sn > seenSniffs) { for (let i = 0; i < Math.min(40, (sn - seenSniffs) * 6); i++) spawn(W, undefined, 1); seenSniffs = sn; }
+  const nid = LAB?.notes?.[0]?.id ?? -1; if (nid !== seenNote) { if (seenNote >= 0) for (let i = 0; i < 36; i++) spawn(W, W - 60 - Math.random() * 140, 1); seenNote = nid; }
+  if (trail.length < target && Math.random() < dt * 6) spawn(W); // the trail keeps filling in, a few points a second
+  g.globalCompositeOperation = "lighter"; const keep = [];
+  for (const p of trail) {
+    p.x -= p.v * dt;
+    if (p.x < 50) { if (keep.length >= target) continue; p.x = W - 60 + Math.random() * 30; p.hot = 0; } // reaching the head, a point re-enters at the tail
+    const y = laneY(p.k, p.x, W) + p.off + Math.sin(now / 1300 + p.ph) * 5;
+    const edge = Math.max(0, Math.min(1, (p.x - 50) / 120, (W - 40 - p.x) / 80)), near = Math.max(0, 1 - Math.abs(p.x - sx) / 60);
+    p.hot *= .996; const a = edge * (.22 + .28 * near + .5 * p.hot);
+    g.fillStyle = `rgba(236,237,240,${a.toFixed(3)})`; g.beginPath(); g.arc(p.x, y, p.s * (1 + .6 * p.hot + .4 * near), 0, 6.283); g.fill(); keep.push(p);
+  }
+  trail = keep; g.globalCompositeOperation = "source-over";
+  g.font = "500 16px JetBrains Mono, monospace"; g.textAlign = "right"; g.fillStyle = "#6b6d72"; g.fillText(`research trail · ${trail.length} points`, W - 14, H - 14); g.textAlign = "left";
+}
 function research(now, W, H) {
-  const busy = !!LAB?.busy, per = busy ? 2600 : 7500, sx = 60 + (now % per) / per * (W - 120), col = busy ? "186,167,255" : "146,129,247";
+  const busy = !!LAB?.busy, per = busy ? 2600 : 7500, sx = 60 + (now % per) / per * (W - 120), col = busy ? "236,237,240" : "170,172,177";
+  drawTrail(now, W, H, sx);
   const gr = g.createLinearGradient(sx - 140, 0, sx, 0); gr.addColorStop(0, `rgba(${col},0)`); gr.addColorStop(1, `rgba(${col},${busy ? .17 : .09})`); g.fillStyle = gr; g.fillRect(sx - 140, 40, 140, H - 80);
   g.strokeStyle = `rgba(${col},.65)`; g.lineWidth = 1.6; g.beginPath(); g.moveTo(sx, 40); g.lineTo(sx, H - 40); g.stroke();
   for (let i = 0; i < 302; i++) { const x = XY[i][0], dx = sx - x; probe[i] = Math.max(probe[i] * .955, dx >= 0 && dx < 24 ? 1 - dx / 24 : 0);
