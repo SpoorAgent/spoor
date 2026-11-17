@@ -1,0 +1,50 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- Field Notes card, 1600x900 CSS px (rendered at 1.2x = 1920x1080). Same look as the site: black, hairlines, serif headline, one violet. -->
+<style>
+@font-face{font-family:"Bodoni Moda";font-weight:400;src:url(../../site/fonts/bodoni-moda-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-weight:400;src:url(../../site/fonts/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-weight:500;src:url(../../site/fonts/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-weight:400;src:url(../../site/fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2")}
+html,body{margin:0;background:#000;overflow:hidden}
+#c{width:1600px;height:900px;position:relative;overflow:hidden;background:#000;color:#fff;font-family:Inter,sans-serif}
+#net{position:absolute;left:0;top:0;width:1600px;height:900px}
+.frame{position:absolute;inset:40px;border:1px solid #292d30;border-radius:24px;pointer-events:none}
+.k{position:absolute;left:110px;top:104px;font:400 18px "JetBrains Mono",monospace;letter-spacing:.06em;color:#baa7ff}
+.k i{font-style:normal;color:#464a4d;margin:0 10px}
+h1{position:absolute;left:106px;top:158px;width:1240px;margin:0;font:400 78px/1.04 "Bodoni Moda",Georgia,serif;letter-spacing:-.01em}
+.s{position:absolute;left:110px;width:1100px;font:400 30px/1.4 Inter,sans-serif;color:#a1a4a5}
+.cite{position:absolute;left:110px;bottom:92px;font:400 16px "JetBrains Mono",monospace;color:#6e727a;max-width:980px}
+.brand{position:absolute;right:104px;bottom:86px;display:flex;align-items:center;gap:12px;font:500 18px Inter,sans-serif;letter-spacing:-.01em;color:#fff}
+</style></head><body><div id="c"><canvas id="net" width="1920" height="1080"></canvas><div class="frame"></div>
+<div class="k" id="k"></div><h1 id="h"></h1><div class="s" id="s"></div><div class="cite" id="cite"></div>
+<div class="brand"><svg viewBox="0 0 32 20" width="30" height="19"><circle cx="10" cy="10" r="8.2" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="20" cy="10" r="8.2" fill="none" stroke="#fff" stroke-width="1.5"/></svg>Spoor</div></div>
+<script>
+// The 302 neurons as a constellation along the bottom: head on the left, tail on the right (the same layout as the coin).
+const FW = /^(AIY|RIB|AVB|PVC)$/, RV = /^(AIB|AIZ|RIM|AVA|AVD|AVE)$/;
+let N = [], XY = [], OUT = [];
+window.setNet = (neurons, chem) => {
+  N = neurons; const order = N.map((n, i) => [n.pos[1], i]).sort((a, b) => a[0] - b[0]), rank = new Float32Array(N.length); order.forEach(([, i], k) => (rank[i] = k / (N.length - 1)));
+  let s = 302; const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296), LANE = { sensory: 1, inter: 0, motor: -1, pharynx: 0.4 };
+  XY = N.map((n, i) => { const u = rank[i]; return [170 + u * 1260, 612 - Math.sin(u * Math.PI * 1.2 + 0.4) * 30 - (LANE[n.kind] ?? 0) * 40 + (rnd() - 0.5) * 44]; });
+  OUT = chem.filter((e) => e[2] >= 4);
+};
+const cls = (id) => id.replace(/[LR]$/, "").replace(/^(AS[EH]|AW[ABC])[LR]$/, "$1");
+function draw(focus) {
+  const g = document.getElementById("net").getContext("2d"), S = 1.2; g.setTransform(S, 0, 0, S, 0, 0); g.clearRect(0, 0, 1600, 900); g.save(); g.beginPath(); g.roundRect(41, 41, 1518, 818, 23); g.clip();
+  const on = new Set(N.map((n, i) => (focus.includes(cls(n.id)) ? i : -1)).filter((i) => i >= 0));
+  g.lineWidth = 0.6; g.strokeStyle = "rgba(240,240,240,.06)"; g.beginPath(); for (const [a, b] of OUT) { g.moveTo(...XY[a]); g.lineTo(...XY[b]); } g.stroke();
+  g.lineWidth = 1; g.strokeStyle = "rgba(186,167,255,.22)"; g.beginPath(); for (const [a, b] of OUT) if (on.has(a) && on.has(b)) { g.moveTo(...XY[a]); g.lineTo(...XY[b]); } g.stroke();
+  for (let i = 0; i < N.length; i++) { const [x, y] = XY[i], lit = on.has(i), c = cls(N[i].id), col = !lit ? "rgba(161,164,165,.42)" : FW.test(c) ? "#3ad389" : RV.test(c) ? "#ff9592" : "#baa7ff";
+    g.fillStyle = col; g.beginPath(); g.arc(x, y, lit ? 4.2 : 2.1, 0, 7); g.fill(); }
+  // label each lit class once, above its first neuron
+  g.font = "400 15px 'JetBrains Mono', monospace"; const done = new Set();
+  for (const i of on) { const c = cls(N[i].id); if (done.has(c)) continue; done.add(c); const [x, y] = XY[i], w = g.measureText(c).width + 16, ly = y - (done.size % 2 ? 34 : 62);
+    g.strokeStyle = "#292d30"; g.lineWidth = 1; g.beginPath(); g.moveTo(x, y - 6); g.lineTo(x, ly + 12); g.stroke();
+    g.fillStyle = "#000"; g.beginPath(); g.roundRect(x - w / 2, ly - 12, w, 24, 6); g.fill(); g.strokeStyle = "#292d30"; g.stroke(); g.fillStyle = "#f0f0f0"; g.fillText(c, x - w / 2 + 8, ly + 5); }
+  g.restore();
+}
+window.set = (d) => {
+  document.getElementById("k").innerHTML = d.k; document.getElementById("h").textContent = d.h; document.getElementById("s").textContent = d.s; document.getElementById("cite").textContent = d.c;
+  const h = document.getElementById("h"), s = document.getElementById("s"); s.style.top = (h.offsetTop + h.offsetHeight + 30) + "px"; draw(d.n || []);
+};
+</script></body></html>

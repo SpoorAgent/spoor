@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SPOOR · live</title>
+<meta name="description" content="Watch a 302-neuron C. elegans brain think: every sniff replayed spike by spike, then the paper books it trades on Robinhood Chain.">
+<link rel="canonical" href="/research">
+<meta property="og:type" content="website"><meta property="og:title" content="Spoor · live"><meta property="og:description" content="Watch a 302-neuron C. elegans brain think: every sniff replayed spike by spike, then the paper books it trades on Robinhood Chain."><meta property="og:image" content="/brand/spoor-og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Spoor · live"><meta name="twitter:description" content="Watch a 302-neuron C. elegans brain think: every sniff replayed spike by spike, then the paper books it trades on Robinhood Chain."><meta name="twitter:image" content="/brand/spoor-og.png">
+<link rel="icon" type="image/svg+xml" href="/brand/spoor-favicon.svg"><link rel="icon" href="/brand/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/brand/spoor-favicon-192.png">
+<style>
+/* fonts are self-hosted so the dashboard also works offline in the desktop and Android apps */
+@font-face{font-family:"Anton";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/anton-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2")}
+/* same identity as the home page: deep void, white type, slate for secondary, bright white for forward/buy and the trader, dark grey for reverse/sell, on near-black charcoal, white for the blind brain and Claude */
+:root{color-scheme:dark;--bg:#141517;--panel:rgba(28,29,32,.88);--fg:#f5f5f5;--white:#ffffff;--violet:#ffffff;--dim:#a9abb0;--faint:#85878b;--line:rgba(220,222,226,.15);--sig:#e4e6e9;--iris-a:#ffffff;--iris-b:#c9cbcf;--iris-c:#8e9095;--iris:linear-gradient(100deg,#ffffff,#c9cbcf 50%,#8e9095);--neg:#75777c;--gold:#ffffff;--mint-ink:#141517;
+  --display:"Anton","Oswald",Impact,sans-serif;--sans:"Inter","Helvetica Neue",Arial,sans-serif;--serif:var(--sans);--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;--gx:max(16px,3vw,env(safe-area-inset-left,0px))}
+*{box-sizing:border-box}html,body{margin:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}:focus-visible{outline:1px solid var(--sig);outline-offset:3px}
+header{position:sticky;top:0;z-index:5;padding:14px var(--gx);display:flex;align-items:center;justify-content:space-between;gap:16px;background:rgba(28,29,32,.82);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);border-bottom:1px solid var(--line)}
+.logo{display:inline-flex;align-items:center;gap:10px;font:500 15px/1 var(--sans);letter-spacing:.14em;color:var(--white)}.logo svg{display:block}
+nav{display:flex;gap:clamp(16px,2.4vw,34px);font:400 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase}nav a{color:var(--dim);transition:color .25s}nav a:hover{color:var(--sig)}
+.open{display:inline-flex;align-items:center;gap:8px;font:500 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--white);border-radius:0;padding:9px 14px;transition:border-color .15s ease-out,background .15s ease-out,color .15s;border:1px solid rgba(255,255,255,.3);cursor:pointer}
+button.open:hover{border-color:var(--sig);background:var(--sig);color:var(--bg)}.open:disabled{opacity:.5;cursor:default}.open i{width:6px;height:6px;border-radius:50%;background:var(--sig);animation:live 1.6s infinite}@keyframes live{50%{opacity:.25}}
+.wrap{max-width:1240px;margin:0 auto;padding:0 var(--gx)}
+section{padding:clamp(48px,8vh,90px) 0 0}
+.eyebrow{font:500 10.5px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--white)}.eyebrow::before{content:"// ";background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1,h2{margin:12px 0 0;font-weight:400;text-wrap:balance;color:var(--fg);letter-spacing:-.03em}h1{font:400 clamp(30px,3.4vw,52px)/1.05 var(--sans);letter-spacing:-.035em}h2{font:400 clamp(26px,2.8vw,42px)/1.05 var(--sans);letter-spacing:-.03em}h1 span,h2 span{background:var(--iris);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 9s ease-in-out infinite alternate}@keyframes sheen{from{background-position:0% 50%}to{background-position:100% 50%}}
+.intro{margin:14px 0 0;max-width:46em;font-size:14.5px;line-height:1.7;color:var(--dim)}
+.panel{position:relative;background:radial-gradient(120% 80% at 0% 0%,rgba(228,230,233,.07),transparent 55%),var(--panel);border:1px solid var(--line);border-radius:0}
+/* corner ticks on every panel, like the hairline grid on the landing */
+.panel::before,.panel::after{content:"";position:absolute;width:9px;height:9px;pointer-events:none;border-style:solid;z-index:1}.panel::before{border-color:var(--iris-a)}.panel::after{border-color:var(--iris-c)}.panel::before{left:-1px;top:-1px;border-width:1px 0 0 1px}.panel::after{right:-1px;bottom:-1px;border-width:0 1px 1px 0}
+.mono{font-family:var(--mono)}.dim{color:var(--dim)}.faint{color:var(--faint)}.pos{color:var(--sig)}.negc{color:var(--neg)}
+/* thinking */
+.think{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;margin-top:26px}
+.stagebox{position:relative;overflow:hidden}
+#brain{display:block;width:100%;height:auto;aspect-ratio:900/330}
+.hud{position:absolute;left:18px;right:18px;top:14px;display:flex;justify-content:space-between;gap:10px;font:500 11px var(--mono);color:var(--faint);pointer-events:none}
+.hud b{color:var(--fg);font-weight:500}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line)}
+.step{padding:14px 16px;border-right:1px solid var(--line);min-width:0;transition:background .3s}.step:last-child{border-right:0}
+.step small{display:block;font:500 10.5px var(--mono);letter-spacing:.12em;color:var(--faint)}
+.step b{display:block;font-weight:500;font-size:15px;margin-top:6px}
+.step p{margin:6px 0 0;font:400 11.5px/1.5 var(--mono);color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step.on{background:rgba(228,230,233,.05)}.step.on small{color:var(--sig)}
+#raster{display:block;width:100%;height:auto;aspect-ratio:900/150;border-top:1px solid var(--line)}
+.side{display:flex;flex-direction:column;gap:16px}
+.side .panel{padding:18px}
+.k{font:500 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.big{font:400 40px/1 var(--sans);letter-spacing:-.04em;font-variant-numeric:tabular-nums;margin-top:6px}
+.bars{margin-top:14px;display:grid;gap:10px}.bar{font:500 11.5px var(--mono);color:var(--dim)}.bar div{height:6px;border-radius:3px;background:rgba(240,240,240,.08);margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;width:0;border-radius:3px;transition:width .15s linear}
+.firing{font:400 12px/1.7 var(--mono);color:var(--dim);min-height:5.1em}.firing b{color:var(--sig);font-weight:500}
+.decision{font:400 20px/1.2 var(--sans);letter-spacing:-.01em;margin-top:8px}
+.ctrl{display:flex;gap:8px;margin-top:12px}.ctrl button{flex:1;font:500 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;background:none;color:var(--fg);border:1px solid var(--line);border-radius:0;padding:8px 10px;cursor:pointer}.ctrl button:hover{border-color:var(--sig);color:var(--sig)}
+/* lab notebook: Claude's running study of the replay above */
+.lab{margin-top:16px;overflow:hidden}
+.lab-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 18px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.lab-state{display:inline-flex;align-items:center;gap:9px;font:500 11.5px var(--mono);color:var(--dim)}
+.lab-state i{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 0 rgba(255,255,255,.5)}
+.lab-state.busy i{background:var(--sig);animation:ping 1.4s infinite}@keyframes ping{0%{box-shadow:0 0 0 0 rgba(228,230,233,.55)}100%{box-shadow:0 0 0 10px rgba(228,230,233,0)}}
+.lab-state.off i{background:var(--faint)}
+.lab-prog{height:2px;background:rgba(240,240,240,.06)}.lab-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,rgba(255,255,255,.1),rgba(255,255,255,.7));transition:width 1s linear}
+.lab-prog.busy i{width:100%!important;background:linear-gradient(90deg,transparent,var(--sig),transparent);background-size:40% 100%;background-repeat:no-repeat;animation:scan 1.3s linear infinite}@keyframes scan{from{background-position:-40% 0}to{background-position:140% 0}}
+.lab-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+.lab-note{padding:20px 22px 22px;border-right:1px solid var(--line);min-width:0}
+.lab-note h3{margin:10px 0 0;font:600 clamp(18px,1.6vw,22px)/1.3 var(--sans);letter-spacing:-.01em}
+.lab-note .obs{margin:12px 0 0;font-size:14.5px;line-height:1.65;color:var(--fg);min-height:4.9em}
+.lab-note .obs .cur{display:inline-block;width:.5em;height:1.05em;margin-left:2px;vertical-align:-.15em;background:var(--sig);animation:live 1s steps(1) infinite}
+.lab-note .q{margin:14px 0 0;padding-left:12px;border-left:1px solid var(--sig);font:400 14px/1.55 var(--sans);color:var(--dim)}
+.lab-meta{margin-top:12px;font:400 11px var(--mono);color:var(--faint)}
+.focus{display:inline-flex;gap:6px;flex-wrap:wrap;margin-left:6px}.focus b{font:500 10.5px var(--mono);color:var(--white);border:1px solid rgba(255,255,255,.3);padding:1px 7px}
+.verd{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:6px}.verd li{font:400 12px/1.55 var(--mono);color:var(--dim)}.verd b{font-weight:500}
+.past{list-style:none;margin:18px 0 0;padding:14px 0 0;border-top:1px solid var(--line);display:grid;gap:8px}.past li{font-size:13px;color:var(--dim);display:flex;gap:10px;min-width:0}.past time{font:400 11px/1.9 var(--mono);color:var(--faint);flex:none}.past span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hyps{padding:20px 22px 22px;min-width:0}
+.hyp{padding:12px 0;border-bottom:1px solid var(--line)}.hyp:last-child{border-bottom:0}
+.hyp-top{display:flex;align-items:center;gap:8px;font:500 11px var(--mono);color:var(--faint)}
+.st{border-radius:0;padding:2px 8px;font:500 10px var(--mono);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line)}
+.st.is-open{color:var(--white);border-color:rgba(255,255,255,.3)}.st.is-supported{color:var(--bg);border-color:var(--sig);background:var(--sig)}.st.is-weakened{color:var(--neg);border-color:rgba(117,119,124,.45)}.st.is-rejected{color:var(--faint)}
+.hyp p{margin:7px 0 0;font-size:13.5px;line-height:1.5}.hyp.is-rejected p{color:var(--faint);text-decoration:line-through;text-decoration-color:rgba(138,138,142,.6)}
+.hyp small{display:block;margin-top:5px;font:400 11px/1.5 var(--mono);color:var(--faint)}
+.tally{display:flex;height:3px;margin-top:8px;border-radius:2px;overflow:hidden;background:rgba(240,240,240,.06)}.tally i:first-child{background:var(--sig)}.tally i:last-child{background:var(--neg)}
+.hyp.fresh{animation:fresh 2.4s ease-out}@keyframes fresh{from{background:rgba(228,230,233,.08)}to{background:transparent}}
+@media (max-width:980px){.lab-body{grid-template-columns:minmax(0,1fr)}.lab-note{border-right:0;border-bottom:1px solid var(--line)}}
+/* track */
+.track{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:8px;margin-top:22px}
+.patch{position:relative;padding:12px 8px 14px;text-align:center;border:1px solid var(--line);border-radius:0;background:var(--panel);min-width:0}
+.patch b{display:block;font:500 13px var(--mono)}.patch small{display:block;font:400 11px var(--mono);color:var(--dim);margin-top:4px}
+.patch .sm{font-size:12px;margin-top:6px}.patch.here{border-color:var(--sig);box-shadow:inset 0 0 0 1px rgba(228,230,233,.25)}
+.patch .who{position:absolute;left:10px;right:10px;bottom:5px;height:2px;border-radius:2px}
+/* books */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:26px}
+.stats div{background:rgba(28,29,32,.92);padding:22px 20px;min-width:0}.stats b{display:block;font:400 clamp(28px,2.8vw,42px)/1 var(--sans);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.stats span{display:block;margin-top:8px;font-size:13px;color:var(--dim)}.stats .ret{font:500 12px var(--mono)}
+.chart{margin-top:16px;padding:20px}.chart-head{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;justify-content:space-between}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;color:var(--dim)}.legend i{display:inline-block;width:14px;height:2px;margin-right:7px;vertical-align:middle}
+.tag{font:400 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);padding:3px 9px}
+#eq{width:100%;height:auto;display:block;margin-top:14px}
+/* tables */
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:22px}
+th{font:500 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.m{font-family:var(--mono);font-size:12.5px}
+.chip{display:inline-block;min-width:58px;padding:3px 8px;border-radius:0;font:500 11.5px var(--mono);text-align:center;border:1px solid var(--line)}
+.two{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;margin-top:22px}
+.two .panel{padding:20px}
+.log{list-style:none;margin:12px 0 0;padding:0}.log li{padding:9px 0;border-bottom:1px solid var(--line);font:400 12px/1.6 var(--mono);color:var(--dim)}.log time{color:var(--faint);margin-right:10px}
+.quote{font-size:clamp(16px,1.4vw,19px);line-height:1.45;letter-spacing:-.01em;margin:16px 0 4px}
+footer{border-top:1px solid var(--line);margin-top:clamp(60px,10vh,110px);padding:28px 0 40px;font:400 11px/1.8 var(--mono);color:var(--faint);line-height:1.7}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 40px;justify-content:space-between}footer p{margin:0;max-width:52em}
+/* behind the page: drifting stardust and the lower edge of the horizon glowing at the top, as on the landing */
+#fib{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+body::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(50vmax 40vmax at 12% 30%,rgba(228,230,233,.08),transparent 70%),radial-gradient(46vmax 38vmax at 88% 72%,rgba(228,230,233,.06),transparent 70%),radial-gradient(60vmax 40vmax at 50% 110%,rgba(220,222,226,.06),transparent 70%)}
+body::before{content:"";position:fixed;left:50%;top:-62vh;width:150vw;height:90vh;translate:-50% 0;border-radius:50%;z-index:-2;pointer-events:none;
+  background:radial-gradient(closest-side,#141517 78%,rgba(255,253,253,.16) 86%,rgba(255,253,253,.05) 92%,transparent 100%);box-shadow:0 0 80px rgba(255,253,253,.04)}
+@media (max-width:980px){.think{grid-template-columns:minmax(0,1fr)}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.track{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (max-width:640px){nav{display:none}.side,.two{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.track{grid-template-columns:repeat(3,minmax(0,1fr))}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.step:nth-child(2){border-right:0}#brain{aspect-ratio:900/420}}
+@media (prefers-reduced-motion:reduce){h1 span,h2 span{animation:none}.open i,.lab-state.busy i,.lab-prog.busy i,.lab-note .obs .cur,.hyp.fresh{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="fib" aria-hidden="true"></canvas>
+<header>
+  <a class="logo" href="/" aria-label="Spoor, back to the landing page"><svg viewBox="0 0 120 120" width="26" height="26" aria-hidden="true"><defs>
+<linearGradient id="lab-band" gradientUnits="userSpaceOnUse" x1="18" y1="44" x2="104" y2="72"><stop offset="0" stop-color="#eef0f2"/><stop offset=".45" stop-color="#c3c5c9"/><stop offset="1" stop-color="#6c6e73"/></linearGradient>
+<radialGradient id="lab-glint" cx="38" cy="30" r="40" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffffff" stop-opacity=".35"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+<clipPath id="lab-ring"><path d="M18 60a42 42 0 1 0 84 0a42 42 0 1 0 -84 0Z M37 56a27 27 0 1 0 54 0a27 27 0 1 0 -54 0Z" clip-rule="evenodd"/></clipPath>
+<linearGradient id="lab-wall" gradientUnits="userSpaceOnUse" x1="92" y1="30" x2="70" y2="62"><stop offset="0" stop-color="#9b9da2"/><stop offset="1" stop-color="#55575c"/></linearGradient>
+<linearGradient id="lab-rim" gradientUnits="userSpaceOnUse" x1="20" y1="20" x2="100" y2="100"><stop offset="0" stop-color="#ffffff" stop-opacity=".75"/><stop offset=".6" stop-color="#ffffff" stop-opacity=".12"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+<radialGradient id="lab-big" cx="42" cy="63" r="15" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#e4e6e9"/><stop offset="1" stop-color="#9ea0a5"/></radialGradient>
+<radialGradient id="lab-small" cx="72" cy="39" r="12" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d9dbdf"/><stop offset=".55" stop-color="#9a9ca1"/><stop offset="1" stop-color="#606267"/></radialGradient>
+<clipPath id="lab-hole"><path d="M37 56a27 27 0 1 0 54 0a27 27 0 1 0 -54 0Z"/></clipPath>
+<filter id="lab-soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter></defs><g><circle cx="76.5" cy="43" r="9" fill="url(#lab-small)"/><path d="M18 60a42 42 0 1 0 84 0a42 42 0 1 0 -84 0Z M37 56a27 27 0 1 0 54 0a27 27 0 1 0 -54 0Z" fill="url(#lab-band)" fill-rule="evenodd"/><g clip-path="url(#lab-hole)"><path d="M37 56a27 27 0 1 0 54 0a27 27 0 1 0 -54 0Z M32.5 60.5a27 27 0 1 0 54 0a27 27 0 1 0 -54 0Z" fill="url(#lab-wall)" fill-rule="evenodd"/></g><path d="M18 60a42 42 0 1 0 84 0a42 42 0 1 0 -84 0Z M37 56a27 27 0 1 0 54 0a27 27 0 1 0 -54 0Z" fill="url(#lab-glint)" fill-rule="evenodd"/><path d="M18.4 60a41.6 41.6 0 1 0 83.2 0a41.6 41.6 0 1 0 -83.2 0Z" fill="none" stroke="url(#lab-rim)" stroke-width=".8"/><g clip-path="url(#lab-ring)"><ellipse cx="56" cy="83.5" rx="9.5" ry="3.2" fill="#3a3c41" opacity=".7" filter="url(#lab-soft)"/></g><circle cx="48.5" cy="70" r="10.5" fill="url(#lab-big)"/></g></svg>SPOOR</a>
+  <nav aria-label="App"><a href="#think">Thinking</a><a href="#track">Patches</a><a href="#books">Books</a><a href="#scouts">Scouts</a><a href="#learn">Learning</a></nav>
+  <span style="display:flex;align-items:center">
+  <span class="open" id="status" role="status"><i aria-hidden="true"></i>connecting</span></span>
+</header>
+<main class="wrap">
+  <section id="think" style="padding-top:20px">
+    <span class="eyebrow">Spoor is thinking · paper only</span>
+    <h1 id="title">Waiting for the first sniff. <span>Spoor checks one patch a minute.</span></h1>
+    <p class="intro">Every minute Spoor's trader brain sniffs one patch. Here is that sniff replayed spike by spike: real spikes from its 302 simulated neurons, slowed down about fifteen times, travelling only along synapses that exist in the wiring diagram.</p>
+    <div class="think">
+      <div class="panel stagebox">
+        <canvas id="brain" width="1800" height="660" aria-label="Spoor's 302 neurons laid out as in the animal's body; neurons flash as they spike during the replayed sniff."></canvas>
+        <div class="hud"><span>head · nerve ring</span><span><b id="clock">0.0</b> / 400 ms</span><span>tail</span></div>
+        <div class="steps">
+          <div class="step" id="st0"><small>01 · SENSE</small><b>Smell</b><p id="p0">sensory neurons</p></div>
+          <div class="step" id="st1"><small>02 · INTEGRATE</small><b>Weigh</b><p id="p1">AIY · AIB · AIZ · RIA</p></div>
+          <div class="step" id="st2"><small>03 · DECIDE</small><b>Forward or back</b><p id="p2">AVB · PVC vs AVA · AVD · AVE</p></div>
+          <div class="step" id="st3"><small>04 · ACT</small><b id="actb">—</b><p id="p3">waiting</p></div>
+        </div>
+        <canvas id="raster" width="1800" height="300" aria-label="Spike raster: every spike of the sniff, one row per neuron, sensory at the top, motor at the bottom."></canvas>
+      </div>
+      <div class="side">
+        <div class="panel"><span class="k">Drive</span><div class="big" id="drive">+0.00</div>
+          <div class="bars"><div class="bar">forward · AIY RIB AVB PVC <span id="fN" style="float:right">0</span><div><i id="fB" style="background:var(--sig)"></i></div></div><div class="bar">reverse · AIB AIZ RIM AVA AVD AVE <span id="rN" style="float:right">0</span><div><i id="rB" style="background:var(--neg)"></i></div></div></div></div>
+        <div class="panel"><span class="k">Firing now</span><div class="firing" id="firing">—</div></div>
+        <div class="panel"><span class="k">Decision</span><div class="decision" id="dec">—</div><div class="mono dim" style="font-size:12px;margin-top:6px" id="decsub"></div>
+          <div class="ctrl"><button id="replay" type="button">Replay</button><button id="speed" type="button">Speed ×1</button></div><div class="ctrl"><button id="src" type="button">Last decisive sniff</button></div></div>
+      </div>
+    </div>
+    <div class="panel lab" id="lab" aria-live="polite">
+      <div class="lab-head"><span class="eyebrow">Lab notebook · Claude studies every sniff</span><span class="lab-state" id="labState"><i aria-hidden="true"></i><span id="labText">connecting</span></span><button class="open" id="labNow" type="button" style="padding:7px 14px;font-size:12.5px">Study now</button></div>
+      <div class="lab-prog" id="labProg"><i id="labBar"></i></div>
+      <div class="lab-body">
+        <div class="lab-note"><span class="k" id="labNo">Latest note</span><h3 id="labTitle">The study starts after a few sniffs.</h3><p class="obs" id="labObs"></p><p class="q" id="labQ" hidden></p><ul class="verd" id="labVerd"></ul><div class="lab-meta" id="labMeta"></div><ul class="past" id="labPast" hidden></ul></div>
+        <div class="hyps"><span class="k" id="hypK">Hypotheses</span><div id="hypList"><p class="dim" style="font-size:13.5px;line-height:1.6;margin:10px 0 0">Claude proposes a hypothesis about the circuit, then keeps testing it against every new batch of sniffs. Three batches for and it holds; three against and it falls.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="track">
+    <span class="eyebrow">Eleven scent patches</span>
+    <h2>Where Spoor is crawling. <span>The bright bar marks the trader, the white bar the blind brain.</span></h2>
+    <div class="track" id="patches"></div>
+  </section>
+
+  <section id="books">
+    <span class="eyebrow">Four paper books · 10,000 USDG each</span>
+    <h2>If a coin flip wins, <span>you will see it.</span></h2>
+    <div class="stats" id="stats"></div>
+    <div class="panel chart"><div class="chart-head"><div class="legend"><span><i style="background:#e4e6e9"></i>Spoor</span><span><i style="background:#ffffff"></i>Blind</span><span><i style="background:#8a8a8e"></i>Random</span><span><i style="background:#6b6d72;outline:1px dashed #8a8a8e"></i>Buy and hold</span></div><span class="tag" id="ctag">live · paper</span></div>
+      <svg id="eq" viewBox="0 0 1000 300" role="img" aria-label="Live paper equity of the four books"><g stroke="rgba(240,240,240,.08)"><line x1="0" y1="60" x2="1000" y2="60"/><line x1="0" y1="150" x2="1000" y2="150"/><line x1="0" y1="240" x2="1000" y2="240"/></g><line id="base" x1="0" x2="1000" stroke="rgba(240,240,240,.22)" stroke-dasharray="3 6"/><path id="c3" fill="none" stroke="#8a8a8e" stroke-width="1.6" stroke-dasharray="5 5"/><path id="c2" fill="none" stroke="#8a8a8e" stroke-width="1.6"/><path id="c1" fill="none" stroke="#ffffff" stroke-width="1.6"/><path id="c0" fill="none" stroke="#e4e6e9" stroke-width="2.2"/></svg></div>
+  </section>
+
+  <section id="scouts">
+    <span class="eyebrow">Three noses</span>
+    <h2>What the scouts smell. <span>Signal in, each scout brain's own drive out.</span></h2>
+    <div class="scroll"><table id="matrix"></table></div>
+  </section>
+
+  <section id="learn">
+    <span class="eyebrow">Sugar and shock</span>
+    <h2>What it trades and what it learns.</h2>
+    <div class="two">
+      <div class="panel"><span class="k">Trade tape · all books</span><div class="scroll"><table id="tape" style="margin-top:8px"></table></div></div>
+      <div class="panel"><span class="k" id="ls">Learning</span><ul class="log" id="log"></ul></div>
+    </div>
+    <div class="panel" style="padding:20px;margin-top:16px"><span class="k">Spoor's posts · drafts written by Claude from telemetry · never posted automatically</span><div id="voice"></div><button class="open" id="speak" type="button" style="margin-top:14px">Write a new draft</button></div>
+  </section>
+</main>
+<footer><div class="wrap">
+      <p>Spoor is an experiment. All trades are simulated on paper with live Uniswap v3 quotes on Robinhood Chain, plus the gas they would cost. No wallet, no keys. Nothing here is financial advice.</p>
+  <p>Connectome: Cook, S. J. et al. (2019), Nature 571, 63–71, via the OpenWorm ConnectomeToolbox (MIT). Positions: OpenWorm c302 (MIT). Synapse signs are simplified and some constants calibrated: a model of the wiring diagram, not a living animal.</p>
+</div></footer>
+<script>
+const $ = (s) => document.querySelector(s), sgn = (v, d = 2) => (v >= 0 ? "+" : "−") + Math.abs(+v).toFixed(d), fmt = (v, d = 2) => Number(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let CON = null, ST = null, out = null, kindOf = [], rowOf = [], cls = {}, XY = [];
+const STAGE = { int: /^(AIY|AIA|AIB|AIZ|RIA|RIB|RIM|AIM|AIN|RIF|RIG|RIH)/, cmd: /^(AVA|AVB|AVD|AVE|PVC)/ };
+// ---------- the body: real neuron positions ----------
+const cv = $("#brain"), g = cv.getContext("2d"), rc = $("#raster"), rg = rc.getContext("2d");
+const SPR = document.createElement("canvas"); SPR.width = SPR.height = 64; { const s = SPR.getContext("2d"), gr = s.createRadialGradient(24, 22, 1, 32, 32, 31); gr.addColorStop(0, "#ffffff"); gr.addColorStop(.22, "#e6e8ec"); gr.addColorStop(.62, "#9a9fa6"); gr.addColorStop(.92, "#3a3e44"); gr.addColorStop(1, "#0b0e14"); s.fillStyle = gr; s.beginPath(); s.arc(32, 32, 30, 0, 7); s.fill(); }
+let tube = [];
+function layout() {
+  const W = cv.width, H = cv.height, P = CON.neurons.map((n) => n.pos), ys = P.map((p) => p[1]), zs = P.map((p) => p[2]), y0 = Math.min(...ys), y1 = Math.max(...ys), z0 = Math.min(...zs), z1 = Math.max(...zs);
+  // head to tail, but the crowded nerve ring is spread out: x blends body position with rank order; each kind gets a lane
+  const rk = new Map(CON.neurons.map((n, i) => [i, n.pos[1]]).sort((a, b) => a[1] - b[1]).map(([i], r) => [i, r / (CON.neurons.length - 1)]));
+  const LANE = { sensory: -.2, inter: 0, motor: .2, pharynx: .3 };
+  XY = CON.neurons.map((n, i) => { const lin = (n.pos[1] - y0) / (y1 - y0), fx = .72 * rk.get(i) + .28 * lin, zn = (n.pos[2] - (z0 + z1) / 2) / (z1 - z0);
+    return [60 + fx * (W - 120), H * (.5 + LANE[n.kind] * .9 - zn * .16) + n.pos[0] * 1.2]; });
+  tube = [];
+  const ORDER = { sensory: 0, inter: 1, motor: 2, pharynx: 3 }; const idx = CON.neurons.map((n, i) => i).sort((a, b) => ORDER[CON.neurons[a].kind] - ORDER[CON.neurons[b].kind] || CON.neurons[a].pos[1] - CON.neurons[b].pos[1]); idx.forEach((i, r) => (rowOf[i] = r));
+  CON.neurons.forEach((n, i) => { cls[i] = n.kind === "sensory" ? 0 : STAGE.cmd.test(n.id) ? 2 : STAGE.int.test(n.id) || n.kind === "inter" ? 1 : 3; });
+  out = CON.neurons.map(() => []); for (const [a, b, w] of CON.chem) out[a].push([b, w]);
+}
+// ---------- replay state ----------
+let SRC = "latest", rast = [], firstSpike = [], T = 0, speed = 1, startAt = 0, glow = new Float32Array(302), pulses = [], fwdSet = new Set(), revSet = new Set(), lastIdx = 0, fCount = 0, rCount = 0, shownCycle = -1, recent = [];
+const DUR = 400, PLAY = 6200;
+function load(w) {
+  rast = []; for (let k = 0; k < (w.raster || []).length; k += 2) rast.push([w.raster[k] / 10, w.raster[k + 1]]); rast.sort((a, b) => a[0] - b[0]);
+  firstSpike = new Array(302).fill(null); for (const [t, i] of rast) if (firstSpike[i] == null) firstSpike[i] = t;
+  glow = new Float32Array(302); pulses = []; lastIdx = 0; fCount = 0; rCount = 0; recent = []; startAt = performance.now();
+  const name = (i) => CON.neurons[i].id, FW = ["AIYL", "AIYR", "RIBL", "RIBR", "AVBL", "AVBR", "PVCL", "PVCR"], RV = ["AIBL", "AIBR", "AIZL", "AIZR", "RIML", "RIMR", "AVAL", "AVAR", "AVDL", "AVDR", "AVEL", "AVER"];
+  fwdSet = new Set(CON.neurons.map((n, i) => (FW.includes(n.id) ? i : -1)).filter((i) => i >= 0)); revSet = new Set(CON.neurons.map((n, i) => (RV.includes(n.id) ? i : -1)).filter((i) => i >= 0));
+  for (let s = 0; s < 4; s++) $("#st" + s).classList.remove("on");
+  const inp = (w.input || []).map(name); $("#p0").textContent = inp.length ? [...new Set(inp.map((n) => n.replace(/[LR]$/, "")))].join(" · ") : "nothing smelled";
+  $("#actb").textContent = "—"; $("#p3").textContent = "deciding…"; $("#dec").textContent = "…"; $("#decsub").textContent = "";
+}
+function decisionText(w) { const d = w.decision; return d === "buy" ? [`Buy ${w.sym}`, `${fmt(w.act.usdg)} USDG on paper`] : d === "sell" ? [`Sell ${w.sym}`, `${fmt(w.act.usdg)} USDG on paper`] : d === "stay" ? [`Stay on ${w.sym}`, `dwell ${w.dwell} · a buy needs two strong sniffs in a row`] : d === "turn" ? [`Turn back`, `away from ${w.sym}, next patch ${w.next}`] : [`Crawl on`, `next patch ${w.next}`]; }
+function frame(now) {
+  requestAnimationFrame(frame); if (!CON || !ST?.brain?.worm) return;
+  const w = cur(), el = (now - startAt) * speed, prevT = T; T = Math.min(DUR, el / PLAY * DUR); const done = el >= PLAY;
+  // spikes that happened in (prevT, T]
+  while (lastIdx < rast.length && rast[lastIdx][0] <= T) { const [t, i] = rast[lastIdx++]; glow[i] = 1; recent.push([t, i]); if (fwdSet.has(i)) fCount++; if (revSet.has(i)) rCount++;
+    if (cls[i] < 3) $("#st" + cls[i]).classList.add("on");
+    for (const [j] of out[i]) if (firstSpike[j] != null && firstSpike[j] >= t && firstSpike[j] - t < 25 && pulses.length < 400) pulses.push([i, j, now, 520 / speed]); }
+  recent = recent.filter(([t]) => T - t < 18);
+  if (done && !$("#st3").classList.contains("on")) { $("#st3").classList.add("on"); const [a, b] = decisionText(w); $("#actb").textContent = a; $("#p3").textContent = b; $("#dec").textContent = a; $("#decsub").textContent = b; }
+  if (el > PLAY / speed * speed + 2600 && !reduce) load(w);
+  $("#clock").textContent = T.toFixed(1); $("#fN").textContent = fCount; $("#rN").textContent = rCount;
+  const mx = Math.max(8, w.f, w.r); $("#fB").style.width = (fCount / mx * 100) + "%"; $("#rB").style.width = (rCount / mx * 100) + "%";
+  const live = (fCount - rCount) / (fCount + rCount + 4); $("#drive").textContent = sgn(done ? w.v : live); $("#drive").className = "big " + ((done ? w.v : live) >= 0 ? "pos" : "negc");
+  const names = [...new Set(recent.map(([, i]) => CON.neurons[i].id))].slice(-14); $("#firing").innerHTML = names.length ? names.map((n) => `<b>${n}</b>`).join(" ") : '<span class="faint">quiet</span>';
+  // draw the body
+  const W = cv.width, H = cv.height; g.clearRect(0, 0, W, H); g.lineCap = g.lineJoin = "round";
+  g.font = "500 18px JetBrains Mono, monospace"; g.fillStyle = "#6b6d72"; [["sensory", .5 - .18], ["inter", .5], ["motor", .5 + .18]].forEach(([t, f]) => g.fillText(t, 12, H * f));
+  for (let i = 0; i < 302; i++) glow[i] *= .93;
+  // synaptic pulses
+  g.globalCompositeOperation = "lighter";
+  pulses = pulses.filter(([a, b, t0, d]) => { const f = (now - t0) / d; if (f > 1.15) return false; const [x0, y0] = XY[a], [x1, y1] = XY[b], k = Math.min(1, f);
+    g.strokeStyle = `rgba(228,230,233,${.32 * (1 - Math.max(0, f - .6) / .55)})`; g.lineWidth = 2; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x0 + (x1 - x0) * k, y0 + (y1 - y0) * k); g.stroke();
+    const hx = x0 + (x1 - x0) * k, hy = y0 + (y1 - y0) * k, gr = g.createRadialGradient(hx, hy, 0, hx, hy, 14); gr.addColorStop(0, "rgba(245,246,248,.9)"); gr.addColorStop(1, "rgba(228,230,233,0)"); g.fillStyle = gr; g.beginPath(); g.arc(hx, hy, 14, 0, 7); g.fill(); return true; });
+  g.globalCompositeOperation = "source-over";
+  // every neuron breathes a little on its own phase, so the body never looks frozen between sniffs
+  for (let i = 0; i < 302; i++) { const [x, y] = XY[i], k = CON.neurons[i].kind, br = reduce ? 0 : Math.sin(now / 1100 + PH[i]), r = (k === "pharynx" ? 4.2 : 5.4) * (1 + glow[i] * .9 + .09 * br + .55 * probe[i]);
+    g.globalAlpha = Math.min(1, (k === "pharynx" ? .35 : .5 + .45 * glow[i]) + .1 * br + .45 * probe[i]); g.drawImage(SPR, x - r, y - r, 2 * r, 2 * r); }
+  g.globalAlpha = 1; g.globalCompositeOperation = "lighter";
+  for (let i = 0; i < 302; i++) if (glow[i] > .06) { const [x, y] = XY[i], r = 30 * glow[i]; const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(200,202,206,${.85 * glow[i]})`); gr.addColorStop(1, "rgba(228,230,233,0)"); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+  g.globalCompositeOperation = "source-over";
+  if (!reduce) research(now, W, H);
+  // labels for the decision neurons
+  g.font = "500 22px JetBrains Mono, monospace"; g.textBaseline = "middle";
+  // plus the neurons the latest lab note is about, ringed in gold
+  for (const [i, foc, k] of LABELS) { const [x, y] = XY[i], lit = glow[i] > .2, id = CON.neurons[i].id, up = foc ? (k % 2 ? 1 : -1) : /AVA|AIB|ASH/.test(id) ? 1 : -1, lx = x + 16, ly = y + up * (foc ? 112 : 70);
+    if (foc) { g.strokeStyle = `rgba(255,255,255,${.55 + .35 * Math.sin(now / 420)})`; g.lineWidth = 2; g.beginPath(); g.arc(x, y, 15, 0, 7); g.stroke(); }
+    g.strokeStyle = lit ? "#e4e6e9" : foc ? "rgba(255,255,255,.75)" : "rgba(138,138,142,.6)"; g.lineWidth = 1.4; g.beginPath(); g.moveTo(x, y); g.lineTo(lx, ly); g.stroke(); const t = id.replace(/[LR]$/, ""), tw = g.measureText(t).width + 20;
+    g.fillStyle = lit ? "rgba(228,230,233,.95)" : foc ? "rgba(255,255,255,.92)" : "rgba(26,27,30,.94)"; g.beginPath(); g.roundRect(lx, ly - 15, tw, 30, 15); g.fill(); g.strokeStyle = "rgba(240,240,240,.22)"; g.stroke(); g.fillStyle = lit ? "#04150d" : foc ? "#0b0e14" : "#f0f0f0"; g.fillText(t, lx + 10, ly + 1); }
+  // raster
+  const RW = rc.width, RH = rc.height; rg.clearRect(0, 0, RW, RH); const xr = (t) => 60 + t / DUR * (RW - 80), yr = (i) => 16 + rowOf[i] / 302 * (RH - 32);
+  rg.fillStyle = "rgba(240,240,240,.05)"; [[0, 85], [85, 164], [164, 280]].forEach(([a, b], k) => { if (k % 2 === 0) rg.fillRect(60, 16 + a / 302 * (RH - 32), RW - 80, (b - a) / 302 * (RH - 32)); });
+  rg.font = "500 18px JetBrains Mono, monospace"; rg.fillStyle = "#8a8a8e"; rg.fillText("sens", 6, 40); rg.fillText("inter", 6, 130); rg.fillText("motor", 6, 215);
+  for (let k = 0; k < lastIdx; k++) { const [t, i] = rast[k]; rg.fillStyle = fwdSet.has(i) ? "#e4e6e9" : revSet.has(i) ? "#75777c" : "rgba(255,255,255,.45)"; rg.fillRect(xr(t) - 1.5, yr(i) - 1.5, 3, 3); }
+  rg.strokeStyle = "#e4e6e9"; rg.lineWidth = 2; rg.beginPath(); rg.moveTo(xr(T), 8); rg.lineTo(xr(T), RH - 8); rg.stroke();
+}
+// ---------- research layer: Claude's study drawn on the body ----------
+// A beam sweeps head to tail (violet while waiting, brighter and faster while Claude is writing a note). Dots it passes light up,
+// key neurons report their first-spike time in this sniff, and the hypothesis neurons are joined along real synapses.
+// None of this is spiking: spikes stay mint glows from the replay.
+const PH = new Float32Array(302).map(() => Math.random() * 6.2832), probe = new Float32Array(302);
+let scanPrev = -1, tags = [], PATH = [];
+const KEYN = /^(AWA|ASH|ASE|AIY|AIB|AIZ|RIB|RIM|AVB|AVA|AVD|PVC)L?$/;
+function pathBetween(a, b) { const prev = new Map([[a, -1]]); let fr = [a];
+  for (let d = 0; d < 4 && fr.length; d++) { const nx = []; for (const u of fr) for (const [v] of out[u]) if (!prev.has(v)) { prev.set(v, u); if (v === b) { const p = [b]; let x = b; while ((x = prev.get(x)) !== -1) p.unshift(x); return p; } nx.push(v); } fr = nx; }
+  return null; }
+function setPath() { const f = LABELS.filter((l) => l[1]).map((l) => l[0]); PATH = []; for (let k = 0; k + 1 < f.length; k++) { const p = pathBetween(f[k], f[k + 1]) || pathBetween(f[k + 1], f[k]); if (p) PATH.push(p); } }
+function research(now, W, H) {
+  const busy = !!LAB?.busy, per = busy ? 2600 : 7500, sx = 60 + (now % per) / per * (W - 120), col = busy ? "186,167,255" : "146,129,247";
+  const gr = g.createLinearGradient(sx - 140, 0, sx, 0); gr.addColorStop(0, `rgba(${col},0)`); gr.addColorStop(1, `rgba(${col},${busy ? .17 : .09})`); g.fillStyle = gr; g.fillRect(sx - 140, 40, 140, H - 80);
+  g.strokeStyle = `rgba(${col},.65)`; g.lineWidth = 1.6; g.beginPath(); g.moveTo(sx, 40); g.lineTo(sx, H - 40); g.stroke();
+  for (let i = 0; i < 302; i++) { const x = XY[i][0], dx = sx - x; probe[i] = Math.max(probe[i] * .955, dx >= 0 && dx < 24 ? 1 - dx / 24 : 0);
+    const crossed = scanPrev >= 0 && (scanPrev <= sx ? x > scanPrev && x <= sx : x > scanPrev || x <= sx);
+    if (crossed && KEYN.test(CON.neurons[i].id)) { const fs = firstSpike[i]; tags.push([i, `${CON.neurons[i].id.replace(/L$/, "")} · ${fs != null ? fs.toFixed(0) + " ms" : "silent"}`, now, fs != null]); } }
+  scanPrev = sx; if (tags.length > 24) tags.splice(0, tags.length - 24);
+  g.globalCompositeOperation = "lighter";
+  for (let i = 0; i < 302; i++) if (probe[i] > .05) { const [x, y] = XY[i], r = 20 * probe[i], h = g.createRadialGradient(x, y, 0, x, y, r); h.addColorStop(0, `rgba(${col},${.5 * probe[i]})`); h.addColorStop(1, `rgba(${col},0)`); g.fillStyle = h; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+  // the pathway the current hypothesis is about, traced along existing chemical synapses
+  g.setLineDash([10, 14]); g.lineDashOffset = -now / 35; g.strokeStyle = "rgba(255,255,255,.5)"; g.lineWidth = 2;
+  for (const p of PATH) { g.beginPath(); p.forEach((i, k) => (k ? g.lineTo(XY[i][0], XY[i][1]) : g.moveTo(XY[i][0], XY[i][1]))); g.stroke(); }
+  g.setLineDash([]);
+  for (const [n, p] of PATH.entries()) { const segs = p.length - 1, u = ((now / 2400 + n * .37) % 1) * segs, s = Math.floor(u), f = u - s, [x0, y0] = XY[p[s]], [x1, y1] = XY[p[s + 1]], x = x0 + (x1 - x0) * f, y = y0 + (y1 - y0) * f;
+    const h = g.createRadialGradient(x, y, 0, x, y, 16); h.addColorStop(0, "rgba(236,237,240,.95)"); h.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = h; g.beginPath(); g.arc(x, y, 16, 0, 7); g.fill(); }
+  g.globalCompositeOperation = "source-over";
+  // while a note is being written: reticles hop between neurons the way an eye scans a slide
+  if (busy) { g.strokeStyle = "rgba(228,230,233,.85)"; g.lineWidth = 1.6; for (let j = 0; j < 4; j++) { const i = (Math.floor(now / 380) * 97 + j * 71) % 302, [x, y] = XY[i], s = 13, c = 5;
+    g.beginPath(); for (const [ax, ay] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { g.moveTo(x + ax * s, y + ay * (s - c)); g.lineTo(x + ax * s, y + ay * s); g.lineTo(x + ax * (s - c), y + ay * s); } g.stroke(); } }
+  g.font = "500 17px JetBrains Mono, monospace"; g.textBaseline = "middle";
+  tags = tags.filter(([i, t, t0, on]) => { const a = (now - t0) / 2000; if (a > 1) return false; const [x, y] = XY[i], yy = y - 28 - a * 36, w = g.measureText(t).width + 16;
+    g.globalAlpha = a < .12 ? a / .12 : 1 - (a - .12) / .88; g.fillStyle = "rgba(26,27,30,.88)"; g.beginPath(); g.roundRect(x - w / 2, yy - 12, w, 24, 12); g.fill(); g.strokeStyle = on ? "rgba(228,230,233,.45)" : "rgba(240,240,240,.18)"; g.lineWidth = 1; g.stroke();
+    g.fillStyle = on ? "#f0f1f3" : "#a1a4a5"; g.fillText(t, x - w / 2 + 8, yy + 1); return true; });
+  g.globalAlpha = 1;
+}
+// ---------- the rest of the page ----------
+let lastTitle = "";
+const COL = { worm: "#e4e6e9", blind: "#ffffff", random: "#8a8a8e", hold: "#8a8a8e" };
+function render() {
+  const s = ST; $("#status").innerHTML = `<i aria-hidden="true"></i>${s.error ? "cycle error, retrying" : `cycle ${s.cycle} · live`}`;
+  const w = s.brain?.worm;
+  if (w) { const c = cur(), cyc = SRC === "strong" && s.brain.strong ? s.brain.strong.cycle : s.cycle; { const t = `Sniff ${cyc} at ${c.sym}. <span>Smell ${sgn(c.smell)}, drive ${sgn(c.v)}.</span>`; if (t !== lastTitle) { lastTitle = t; $("#title").innerHTML = t; window.Motion && Motion.rewords($("#title")); } } if (SRC === "latest" && shownCycle !== s.cycle && w.raster) { shownCycle = s.cycle; load(w); } }
+  $("#src").disabled = !s.brain?.strong; $("#src").textContent = SRC === "latest" ? (s.brain?.strong ? `Last decisive sniff (${s.brain.strong.sym})` : "No decisive sniff yet") : "Back to the latest sniff";
+  $("#patches").innerHTML = s.assets.map((a, k) => { const m = s.matrix[k] || {}, sm = m.smell ?? 0, here = s.trader.worm.at === k, bl = s.trader.blind.at === k;
+    return `<div class="patch${here ? " here" : ""}"><b>${a.sym}</b><small>${fmt(s.prices[a.sym]?.mid ?? 0)}</small><div class="sm mono ${sm >= 0 ? "pos" : "negc"}">${sgn(sm)}</div>${here || bl ? `<div class="who" style="background:${here && bl ? "linear-gradient(90deg,#e4e6e9 50%,#ffffff 50%)" : here ? "#e4e6e9" : "#ffffff"}"></div>` : ""}</div>`; }).join("");
+  const B = s.books; $("#stats").innerHTML = Object.entries(B).map(([k, b]) => { const e = b.equity.at(-1)?.[1] ?? 10000, r = (e / 10000 - 1) * 100; return `<div><b>${fmt(e, 0)}</b><span>${{ worm: "Spoor", blind: "Blind", random: "Random", hold: "Buy and hold" }[k]} · <span class="ret ${r >= 0 ? "pos" : "negc"}">${r >= 0 ? "+" : "−"}${Math.abs(r).toFixed(2)}%</span>${b.paused ? " · paused" : ""}</span></div>`; }).join("");
+  const all = Object.values(B).flatMap((b) => b.equity); if (all.length) { const t0 = Math.min(...all.map((x) => x[0])), t1 = Math.max(t0 + 1, ...all.map((x) => x[0])), v0 = Math.min(9950, ...all.map((x) => x[1])), v1 = Math.max(10050, ...all.map((x) => x[1])), Y = (v) => 280 - (v - v0) / (v1 - v0) * 260;
+    for (const [k, id] of Object.entries({ worm: "c0", blind: "c1", random: "c2", hold: "c3" })) $("#" + id).setAttribute("d", B[k].equity.map((p, i) => (i ? "L" : "M") + ((p[0] - t0) / (t1 - t0) * 1000).toFixed(1) + " " + Y(p[1]).toFixed(1)).join(""));
+    $("#base").setAttribute("y1", Y(10000)); $("#base").setAttribute("y2", Y(10000)); $("#ctag").textContent = `live · paper · ${B.worm.equity.length} points`; }
+  const chip = (x) => { const v = x?.v ?? 0; return `<span class="chip ${v > .02 ? "pos" : v < -.02 ? "negc" : "faint"}" style="${v > .02 ? "border-color:rgba(228,230,233,.4)" : ""}">${sgn(v)}</span> <span class="faint mono" style="font-size:11px">s ${sgn(x?.s ?? 0)}</span>`; };
+  $("#matrix").innerHTML = `<tr><th>Asset</th><th>Flow scout</th><th>Tape scout</th><th>News scout</th><th>Smell</th><th>Learned · spoor</th><th>Learned · blind</th></tr>` + s.matrix.map((m) => `<tr><td class="m">${m.sym}</td><td>${chip(m.flow)}</td><td>${chip(m.tape)}</td><td>${chip(m.news)}</td><td class="m ${m.smell >= 0 ? "pos" : "negc"}">${sgn(m.smell)}</td><td class="m">${sgn(m.L.worm)}</td><td class="m">${sgn(m.L.blind)}</td></tr>`).join("");
+  const T2 = Object.entries(B).flatMap(([k, b]) => b.trades.map((t) => ({ ...t, k }))).sort((a, b) => b.t - a.t).slice(0, 12);
+  $("#tape").innerHTML = `<tr><th>Time</th><th>Book</th><th>Side</th><th>Asset</th><th>USDG</th><th>Price</th></tr>` + (T2.length ? T2.map((t) => `<tr><td class="m faint">${new Date(t.t).toUTCString().slice(17, 22)}</td><td><span style="color:${COL[t.k]}">●</span> ${B[t.k].name}</td><td class="m ${t.side === "buy" ? "pos" : "negc"}">${t.side}</td><td class="m">${t.sym}</td><td class="m">${fmt(t.usdg)}</td><td class="m">${fmt(t.px)}</td></tr>`).join("") : `<tr><td colspan="6" class="faint">No trades yet.</td></tr>`);
+  $("#ls").textContent = `Learning · ${s.learnStats.sugar} sugar · ${s.learnStats.shock} shock`;
+  $("#log").innerHTML = s.log.slice(0, 10).map((l) => `<li><time>${new Date(l.t).toUTCString().slice(17, 22)}</time>${l.m.replace(/[<>&]/g, "")}</li>`).join("") || `<li>Nothing learned yet. Outcomes are scored ${s.rules.evalMin} minutes after a buy.</li>`;
+}
+function cur() { return SRC === "strong" && ST?.brain?.strong ? ST.brain.strong : ST.brain.worm; }
+async function poll() { try { ST = await (await fetch("/api/state", { cache: "no-store" })).json(); render(); } catch { $("#status").innerHTML = "<i></i>offline"; } }
+async function voice() { try { const v = await (await fetch("/api/voice", { cache: "no-store" })).json(); $("#voice").innerHTML = v.drafts.length ? v.drafts.slice(0, 3).map((d) => `<p class="quote">“${d.text.replace(/[<>&]/g, "")}”</p><p class="mono faint" style="font-size:11px;margin:0 0 12px">${new Date(d.t).toUTCString().slice(5, 22)} UTC</p>`).join("") : `<p class="dim">No drafts yet.</p>`; } catch {} }
+$("#speak").onclick = async () => { $("#speak").textContent = "writing…"; const r = await fetch("/api/voice", { method: "POST" }); $("#speak").textContent = r.ok ? "Write a new draft" : ((await r.json()).error || "try again"); voice(); };
+$("#replay").onclick = () => ST?.brain?.worm && load(cur());
+$("#src").onclick = () => { if (!ST?.brain?.strong && SRC === "latest") return; SRC = SRC === "latest" ? "strong" : "latest"; shownCycle = -1; load(cur()); render(); };
+$("#speed").onclick = () => { speed = speed === 1 ? .5 : speed === .5 ? 2 : 1; $("#speed").textContent = `Speed ×${speed}`; if (ST?.brain?.worm) load(cur()); };
+// ---------- lab notebook: Claude's continuous study ----------
+let LAB = null, LABELS = [], skew = 0, typedId = 0, typing = null, seenHyp = {};
+const esc = (s) => String(s ?? "").replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" })[c]);
+const ago = (t) => { const m = Math.round((Date.now() - skew - t) / 60e3); return m < 1 ? "just now" : m < 60 ? `${m} min ago` : `${Math.round(m / 60)} h ago`; };
+function setLabels(focus) {
+  const pick = (id) => CON.neurons.findIndex((n) => n.id === id), base = ["AWAL", "ASHL", "AIYL", "AIBL", "AVBL", "AVAL"].map(pick).filter((i) => i >= 0);
+  const foc = (focus || []).map((c) => [c + "L", c, c + "R"].map(pick).find((i) => i >= 0)).filter((i) => i != null && i >= 0);
+  LABELS = [...base.filter((i) => !foc.includes(i)).map((i) => [i, false, 0]), ...foc.map((i, k) => [i, true, k])]; setPath();
+}
+function typeOut(text) {
+  const el = $("#labObs"); clearInterval(typing); if (reduce) { el.textContent = text; return; }
+  let n = 0; el.innerHTML = '<span></span><span class="cur"></span>'; const sp = el.firstChild;
+  typing = setInterval(() => { n = Math.min(text.length, n + 2); sp.textContent = text.slice(0, n); if (n >= text.length) { clearInterval(typing); setTimeout(() => el.querySelector(".cur")?.remove(), 2400); } }, 22);
+}
+function labClock() {
+  if (!LAB) return; const st = $("#labState"), now = Date.now() - skew;
+  st.className = "lab-state" + (LAB.busy ? " busy" : LAB.enabled ? "" : " off"); $("#labProg").className = "lab-prog" + (LAB.busy ? " busy" : "");
+  if (!LAB.enabled) { $("#labText").textContent = "paused · add an ANTHROPIC_API_KEY to run the study"; $("#labBar").style.width = "0"; return; }
+  if (LAB.busy) { $("#labText").textContent = `Claude is reading sniffs ${(LAB.notes[0]?.upTo ?? 0) + 1}–${LAB.lastCycle ?? "…"}`; return; }
+  const left = Math.max(0, LAB.nextAt - now), mm = Math.floor(left / 60e3), ss = String(Math.floor(left / 1e3) % 60).padStart(2, "0");
+  $("#labText").textContent = `${LAB.runs} note${LAB.runs === 1 ? "" : "s"} · ${LAB.sniffs} sniffs logged · next note in ${mm}:${ss}`;
+  $("#labBar").style.width = `${Math.min(100, Math.max(0, 100 * (1 - left / (LAB.every * 1e3))))}%`;
+}
+function renderLab() {
+  const L = LAB, n = L.notes[0];
+  if (n && n.id !== typedId) { typedId = n.id; $("#labNo").textContent = `Note ${n.id} · sniffs ${n.from}–${n.upTo}`; $("#labTitle").textContent = n.title; typeOut(n.observation); setLabels(n.focus);
+    $("#labQ").hidden = !n.nextQuestion; $("#labQ").textContent = n.nextQuestion ? `Next question: ${n.nextQuestion}` : "";
+    $("#labVerd").innerHTML = (n.verdicts || []).map((v) => `<li><b class="${v.verdict === "supports" ? "pos" : "negc"}">${esc(v.id)} ${v.verdict === "supports" ? "▲ supports" : "▼ contradicts"}</b> · ${esc(v.reason)}</li>`).join("") + (n.born ? `<li><b style="color:var(--gold)">${esc(n.born)} proposed</b> · new hypothesis on the board</li>` : ""); }
+  if (n) $("#labMeta").innerHTML = `${ago(n.t)} · ${esc(n.model)}${n.focus?.length ? ` · about<span class="focus">${n.focus.map((f) => `<b>${esc(f)}</b>`).join("")}</span>` : ""}${L.lastError ? ` · <span class="negc">last try: ${esc(L.lastError)}</span>` : ""}`;
+  else if (L.lastError) $("#labMeta").innerHTML = `<span class="negc">${esc(L.lastError)}</span>`;
+  const past = L.notes.slice(1, 5); $("#labPast").hidden = !past.length; $("#labPast").innerHTML = past.map((p) => `<li><time>#${p.id}</time><span>${esc(p.title)}</span></li>`).join("");
+  const H = L.hyps; $("#hypK").textContent = `Hypotheses · ${H.filter((h) => h.status === "supported").length} holding · ${H.filter((h) => h.status === "open" || h.status === "weakened").length} under test`;
+  if (H.length) $("#hypList").innerHTML = H.map((h) => { const fresh = seenHyp[h.id] && seenHyp[h.id] !== h.updated, tot = h.for + h.against || 1; seenHyp[h.id] = h.updated;
+    return `<div class="hyp is-${h.status}${fresh ? " fresh" : ""}"><div class="hyp-top">${esc(h.id)} <span class="st is-${h.status}">${h.status}</span><span style="margin-left:auto">${h.for} for · ${h.against} against</span></div><p>${esc(h.text)}</p>${h.test ? `<small>test: ${esc(h.test)}</small>` : ""}${h.last ? `<small>latest: ${esc(h.last)}</small>` : ""}<div class="tally"><i style="width:${h.for / tot * 100}%"></i><span style="flex:1"></span><i style="width:${h.against / tot * 100}%"></i></div></div>`; }).join("");
+  labClock();
+}
+async function lab() { try { LAB = await (await fetch("/api/research", { cache: "no-store" })).json(); skew = Date.now() - LAB.now; renderLab(); } catch {} }
+$("#labNow").onclick = async () => { const b = $("#labNow"); b.disabled = true; b.textContent = "studying…"; if (LAB) { LAB.busy = true; labClock(); }
+  const r = await fetch("/api/research", { method: "POST" }).catch(() => null), j = r ? await r.json().catch(() => ({})) : {}; b.disabled = false; b.textContent = r?.ok ? "Study now" : (j.error || "try again"); setTimeout(() => (b.textContent = "Study now"), 4000); lab(); };
+fetch("/api/connectome").then((r) => r.json()).then((c) => { CON = c; layout(); setLabels([]); poll(); voice(); lab(); setInterval(poll, 5000); setInterval(voice, 60000); setInterval(lab, 4000); setInterval(labClock, 1000); requestAnimationFrame(frame); });
+</script>
+<script src="motion.js"></script>
+<script>if (window.Motion) { Motion.words("h2"); Motion.peel(".stagebox, .side .panel, .track, .stats, .chart, .two .panel, .lab, #matrix", 16); Motion.tilt(".side .panel, .two .panel", 3); }</script>
+<script>
+// stardust: a slow field with depth that drifts with the scroll, the same as behind the landing
+(() => { const c = document.getElementById("fib"), g = c.getContext("2d"), still = matchMedia("(prefers-reduced-motion: reduce)").matches; let W = 0, H = 0;
+  const P = Array.from({ length: innerWidth < 760 ? 110 : 220 }, () => ({ x: Math.random(), y: Math.random(), z: .2 + Math.random() * .8, t: Math.random() * 6.28 }));
+  const size = () => { const d = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); }; addEventListener("resize", size); size();
+  let last = performance.now(); const frame = (now) => { const dt = Math.min(.05, (now - last) / 1000); last = now; g.clearRect(0, 0, W, H);
+    for (const p of P) { if (!still) p.t += dt * (.8 + p.z); const y = ((p.y * H - scrollY * p.z * .35) % H + H) % H, a = (.12 + .3 * p.z) * (.6 + .4 * Math.sin(p.t));
+      g.fillStyle = "rgba(255,253,253," + a.toFixed(3) + ")"; g.fillRect(p.x * W, y, p.z * 1.4, p.z * 1.4); }
+    if (!still) requestAnimationFrame(frame); }; requestAnimationFrame(frame); })();
+</script>
+</body>
+</html>

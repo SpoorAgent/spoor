@@ -1,0 +1,31 @@
+SPOOR · X profile
+
+Display name:
+Spoor
+
+Handle ideas (check which are free):
+@spoorbrain / @spoor302 / @spoorlab_rh
+
+Main bio:
+A paper trader with a nematode's brain. 302 real C. elegans neurons smell Robinhood Chain, hold still, then strike. No AI makes the trades.
+
+Alternative bio 1 (research):
+The first animal ever fully wired, now hunting markets on paper. 302 neurons, Cook 2019 connectome, a lab notebook kept by Claude.
+
+Alternative bio 2 (short):
+302 neurons. Still. Patient. Then it strikes. On paper.
+
+Location:
+inside a 1 mm nerve ring
+
+Website:
+[SITE]
+
+Profile photo: brand/x-pfp.png
+Header: brand/x-banner.png
+Link preview image (og:image for the site): brand/og.png
+
+Pinned post: L1 (image brand/launch.png).
+Before launch, pin R01 or the TEASER.
+
+Do not reuse the original project's X handle, ticker or contract address unless you own them. This kit is written for a new account.

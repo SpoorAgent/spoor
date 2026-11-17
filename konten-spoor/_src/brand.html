@@ -1,0 +1,97 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- Brand images. render.mjs opens brand.html?part=<name> at that part's size.
+     The SPOOR look: near-black #141517, soft white light, faint topographic lines, Inter + JetBrains Mono,
+     the logo (a ring with two spheres) from ../brand/spoor-mark-clear-1024.png (made by logo.mjs), and for the X banner
+     the hero's particle sphere from ../brand/sphere.png (render.mjs sphere). -->
+<style>
+@font-face{font-family:"Inter";font-weight:400;src:url(../../site/fonts/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-weight:500;src:url(../../site/fonts/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-weight:400;src:url(../../site/fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2")}
+:root{--bg:#141517;--fg:#f5f5f5;--muted:#a9abb0;--faint:#6b6d72;--hair:rgba(255,255,255,.12)}
+html,body{margin:0;background:var(--bg);overflow:hidden;color:var(--fg);font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}
+.part{display:none;position:relative;overflow:hidden;background:var(--bg)}
+.mono{font-family:"JetBrains Mono",monospace}
+/* the logo, with a pool of soft light behind it */
+.mark{position:absolute;background:url(../brand/spoor-mark-clear-1024.png) center/contain no-repeat;filter:drop-shadow(0 30px 60px rgba(0,0,0,.55))}
+/* the hero's particle sphere (captured from the home page by render.mjs sphere), faded at the edges */
+.sphere{position:absolute;background:url(../brand/sphere.png) center/cover no-repeat;-webkit-mask-image:radial-gradient(circle at 49% 57%,#000 0,#000 205px,transparent 262px);mask-image:radial-gradient(circle at 49% 57%,#000 0,#000 205px,transparent 262px)}
+.glow{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.11),rgba(255,255,255,.035) 55%,transparent)}
+/* faint topographic lines along the bottom, like the terrain on the home page */
+.topo{position:absolute;left:0;right:0;bottom:0;width:100%;pointer-events:none}
+.topo path{fill:none;stroke:#fff;stroke-width:1}
+.grain{position:absolute;inset:0;opacity:.06;mix-blend-mode:overlay;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.eyebrow{font:400 15px "JetBrains Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{margin:0;font-weight:400;letter-spacing:-.045em}
+h1 em{font-style:normal;background:linear-gradient(100deg,#ffffff,#c9cbcf 55%,#8e9095);-webkit-background-clip:text;background-clip:text;color:transparent}
+.word{position:absolute;display:block}
+.word path{fill:none;stroke:var(--fg);stroke-width:1.9;stroke-linecap:square;stroke-linejoin:miter}
+
+/* X header 1500x500. X puts the avatar over the lower left, so the type stays top-left and the logo sits right */
+#banner{width:1500px;height:500px}
+#banner .glow{right:20px;top:-60px;width:620px;height:620px}
+#banner .sphere{right:96px;top:-58px;width:500px;height:500px;-webkit-mask-image:radial-gradient(circle at 49% 57%,#000 0,#000 183px,transparent 232px);mask-image:radial-gradient(circle at 49% 57%,#000 0,#000 183px,transparent 232px)}
+#banner .t{position:absolute;left:110px;top:58px;width:760px}
+#banner h1{margin-top:18px;font-size:82px;line-height:.98}
+#banner p{margin:18px 0 0;font:400 17px/1.5 "JetBrains Mono",monospace;color:var(--muted)}
+#banner .ref{position:absolute;right:120px;bottom:30px;font-size:12px;letter-spacing:.14em;color:var(--faint)}
+/* avatar 1000x1000: the logo alone, centred for X's circle crop */
+#pfp{width:1000px;height:1000px}
+#pfp .glow{left:50%;top:50%;width:980px;height:980px;transform:translate(-50%,-50%)}
+#pfp .mark{left:50%;top:50%;width:700px;height:700px;transform:translate(-50%,-50%)}
+/* link preview 1200x630 */
+#og{width:1200px;height:630px}
+#og .glow{right:-80px;top:-10px;width:700px;height:700px}
+#og .mark{right:70px;top:115px;width:400px;height:400px}
+#og .t{position:absolute;left:72px;top:92px;width:640px}
+#og .pill{display:inline-flex;align-items:center;gap:10px;padding:7px 14px;border:1px solid var(--hair);border-radius:999px;font:400 14px "JetBrains Mono",monospace;letter-spacing:.06em;color:var(--fg)}
+#og .pill i{width:7px;height:7px;border-radius:50%;background:#fff}
+#og h1{margin-top:30px;font-size:74px;line-height:1}
+#og p{margin:24px 0 0;font-size:21px;line-height:1.5;color:var(--muted);max-width:28em}
+#og .u{position:absolute;left:72px;bottom:52px;font-size:14px;letter-spacing:.08em;color:var(--faint)}
+/* launch post 1600x900 and teaser 1600x900 */
+#launch,#teaser{width:1600px;height:900px}
+#launch .glow{right:-40px;top:40px;width:900px;height:900px}
+#launch .mark{right:110px;top:170px;width:560px;height:560px}
+#launch .t{position:absolute;left:110px;top:140px;width:820px}
+#launch h1{margin-top:28px;font-size:96px;line-height:1}
+#launch p{margin:30px 0 0;font-size:26px;line-height:1.45;color:var(--muted);max-width:26em}
+#launch .row{position:absolute;left:110px;bottom:92px;display:flex;gap:56px}
+#launch .row div{border-top:1px solid var(--hair);padding-top:14px;min-width:150px}
+#launch .row small{display:block;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+#launch .row b{display:block;margin-top:8px;font-weight:400;font-size:24px}
+#teaser .glow{left:50%;top:44%;width:900px;height:900px;transform:translate(-50%,-50%)}
+#teaser .mark{left:50%;top:42%;width:470px;height:470px;transform:translate(-50%,-50%)}
+#teaser .t{position:absolute;left:0;right:0;bottom:96px;text-align:center}
+#teaser h1{font-size:60px;line-height:1}
+#teaser p{margin:18px 0 0;font-size:15px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+</style></head><body>
+<div class="part" id="banner"><div class="glow"></div><svg class="topo"></svg><div class="sphere"></div>
+  <div class="t"><div class="eyebrow">302 neurons · no AI · paper only</div><h1>It smells<br><em>the market.</em></h1><p>A simulated C. elegans brain, paper trading on Robinhood Chain.</p></div>
+  <div class="ref mono">SPOOR · CONNECTOME: COOK ET AL. 2019 · CLAUDE KEEPS THE LAB NOTEBOOK</div><div class="grain"></div></div>
+<div class="part" id="pfp"><div class="glow"></div><div class="mark"></div><div class="grain"></div></div>
+<div class="part" id="og"><div class="glow"></div><svg class="topo"></svg><div class="mark"></div>
+  <div class="t"><span class="pill"><i></i>Lab notebook · Claude studies every sniff</span><h1>A brain that<br><em>reads markets.</em></h1><p>302 neurons wired from the C. elegans connectome, trading Robinhood Chain on paper. No AI makes the calls.</p></div>
+  <div class="u mono">SPOOR · PAPER ONLY · NOT FINANCIAL ADVICE</div><div class="grain"></div></div>
+<div class="part" id="launch"><div class="glow"></div><svg class="topo"></svg><div class="mark"></div>
+  <div class="t"><div class="eyebrow">SPOOR · live</div><h1>A nematode's brain,<br><em>now hunting markets.</em></h1><p>302 neurons. Every sniff replayed spike by spike. No AI makes the trades.</p></div>
+  <div class="row mono"><div><small>neurons</small><b>302</b></div><div><small>synapses</small><b>3,671</b></div><div><small>gap junctions</small><b>1,091</b></div><div><small>books</small><b>4 · paper</b></div></div><div class="grain"></div></div>
+<div class="part" id="teaser"><div class="glow"></div><svg class="topo"></svg><div class="mark"></div>
+  <div class="t"><h1>302 neurons. <em>One scent at a time.</em></h1><p class="mono">soon</p></div><div class="grain"></div></div>
+<script>
+const part = new URLSearchParams(location.search).get("part") || "banner", el = document.getElementById(part);
+el.style.display = "block";
+// topographic lines: gently waving rows that crowd together toward the horizon
+const topo = el.querySelector(".topo");
+if (topo) {
+  const W = el.offsetWidth, H = Math.round(el.offsetHeight * .42), rows = 15; topo.setAttribute("viewBox", `0 0 ${W} ${H}`); topo.style.height = H + "px";
+  let d = "";
+  for (let r = 0; r < rows; r++) {
+    const k = r / (rows - 1), y = H * Math.pow(k, 1.7), amp = 6 + k * 16, a = .05 + k * .14;
+    let p = ""; for (let x = 0; x <= W; x += 12) { const v = y + Math.sin(x * .006 + r * .7) * amp * .6 + Math.sin(x * .017 - r * 1.3) * amp * .4; p += (x ? "L" : "M") + x + " " + v.toFixed(1); }
+    d += `<path d="${p}" stroke-opacity="${a.toFixed(3)}"/>`;
+  }
+  topo.innerHTML = d;
+}
+</script>
+</body></html>

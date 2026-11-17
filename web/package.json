@@ -1,0 +1,26 @@
+{
+  "name": "wormbrain-web",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "prebuild": "node -e \"require('fs').rmSync('../site/assets',{recursive:true,force:true})\""
+  },
+  "type": "module",
+  "devDependencies": {
+    "@fontsource/jetbrains-mono": "^5.1.0",
+    "@types/three": "^0.170.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  },
+  "dependencies": {
+    "@fontsource/anton": "^5.1.0",
+    "@fontsource/bodoni-moda": "^5.1.0",
+    "@fontsource/inter": "^5.1.0",
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.13",
+    "three": "^0.170.0"
+  },
+  "private": true
+}
